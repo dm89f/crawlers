@@ -1,7 +1,7 @@
 {
-  "name": "crawler_2",
+  "name": "crawler_logics",
   "version": "1.0.0",
-  "description": "",
+  "description": "Multiple techniques to Crawl website for page URLs, and differentiate them to template and static ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
