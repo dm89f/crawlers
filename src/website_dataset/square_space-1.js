@@ -1,4 +1,4 @@
-[
+let dataSets=[
   "https://michelegee.com/",
   "https://www.foodshot.com.au/",
   "https://www.bannerunitedchurch.com/",
@@ -82,3 +82,7 @@
   "https://www.hyphencanada.org/",
   "https://g.page/my-codeless-website?share"
 ]
+
+module.exports={
+  dataSets
+}

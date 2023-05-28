@@ -80,8 +80,9 @@ async function findAllUrlsFromRobotsTxt(robotsTxt) {
           httpsUrls.push(nXmlUrl);
         }
       });
+
     } catch (error) {
-      console.log(error.name);
+      console.log(xmlUrl, error.name ) 
     }
   }
 

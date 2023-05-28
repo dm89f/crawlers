@@ -53,7 +53,7 @@ function createPageTree(pageUrls) {
 async function getLinkIfResponseOk(pageUrl) {
   const response = await axios.get(pageUrl);
 
-  if (response.status === 200) {
+  if (response.status !== 400) {
     return pageUrl;
   }
 
@@ -65,7 +65,6 @@ async function findPagesCategory(treeNode) {
     static: [],
     template: [],
   };
-
   const templateMap = new Map(); //track template pages
 
   //workaround: add root node to static
@@ -82,63 +81,64 @@ async function findPagesCategory(treeNode) {
   while (queue.length > 0) {
     let node = queue.shift();
 
-    if (node.children.length > 0) {
-      for (let i = 0; i < node.children.length; ++i) {
-        let currentChild = node.children[i];
-
-        if (currentChild.children.length === 0) {
-          //node is leaf node
-          if (!templateMap.has(currentChild.parentId)) {
-            //parent is not a template
-            result.static.push({
-              name: currentChild.name,
-              url: currentChild.url,
-              ssUrl: currentChild.url,
-            });
-          }
-        } else {
-          queue.push(currentChild);
-          templateMap.set(currentChild.id, true);
-
-          const [sPromise, tPromise] = await Promise.allSettled([
-            getLinkIfResponseOk(currentChild.url), //check response for page is static
-            getLinkIfResponseOk(currentChild.children[0].url),
-          ]);
-
-          if (sPromise.status === 'fulfilled') {
-            result.static.push({
-              name: currentChild.name,
-              url: currentChild.url,
-              ssUrl: sPromise.value,
-            });
-          }
-
-          let urlArray = [];
-          for (let childNode of currentChild.children) {
-            let url = await getLinkIfResponseOk(childNode.url);
-            if (url) {
-              urlArray.push({ url, name: childNode.name });
+    try {
+      if (node.children.length > 0) {
+        for (let i = 0; i < node.children.length; ++i) {
+          let currentChild = node.children[i];
+          console.log(currentChild.url);
+          if (currentChild.children.length === 0) {
+            //node is leaf node
+            if (!templateMap.has(currentChild.parentId)) {
+              //parent is not a template
+              result.static.push({
+                name: currentChild.name,
+                url: currentChild.url,
+                ssUrl: currentChild.url,
+              });
             }
-          }
-          result.template.push({
-            name: currentChild.name,
-            url: currentChild.url,
-            urlArray,
-            numChild: currentChild.children.length,
-            ssUrl: tPromise.value,
-          });
+          } else {
+            queue.push(currentChild);
+            templateMap.set(currentChild.id, true);
 
-          // if (tPromise.status === 'fulfilled') {
-          //   result.template.push({
-          //     name: currentChild.name,
-          //     url: currentChild.url,
-          //     numChild: currentChild.children.length,
-          //     ssUrl: tPromise.value,
-          //   });
-          // }
+            const [sPromise] = await Promise.allSettled([
+              getLinkIfResponseOk(currentChild.url), //check response for page is static
+            ]);
+
+            if (sPromise.status === 'fulfilled') {
+              result.static.push({
+                name: currentChild.name,
+                url: currentChild.url,
+                ssUrl: sPromise.value,
+              });
+            }
+
+            let urlArray = [];
+            for (let childNode of currentChild.children) {
+              let url = await getLinkIfResponseOk(childNode.url);
+              if (url) {
+                urlArray.push({ url, name: childNode.name });
+              }
+              if (urlArray.length > 20) {
+                break;
+              }
+            }
+            result.template.push({
+              name: currentChild.name,
+              url: currentChild.url,
+              urlArray,
+              numChild: currentChild.children.length,
+              ssUrl: currentChild.children[0].url,
+            });
+
+
+          }
         }
       }
+    } catch (error) {
+      console.log(error.name);
     }
+
+
   }
 
   return result;
