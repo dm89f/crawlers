@@ -1,16 +1,10 @@
-const { InvalidUrlError } = require('./CustomErrors/CustomErrors');
-const { Axios } = require('./config/axiosInstance');
 const { formatUrlString } = require('./utils/formatUrl');
-const { getAllUrslsUsingAxios } = require('./getAllUrls/logics/xmlSitemapLogic')
 const fs = require('fs')
-const { createPageTree, findPagesCategory } = require('../src/getAllUrls/utils/createPageTree')
-const { data_sets } = require('./website_dataset/wix-sites')
-const { dataSets: square_space } = require('./website_dataset/square_space-1')
-const { wordpress_sites } = require('./website_dataset/wordpress');
-// Usage
+const { data_set } = require('./website_dataset/wordpress-sites_sitemap')
+const getAllUrls = require('../crawlers/index');
+const { createPageTree, findPagesCategory } = require('../crawlers/utils/createPageTree');
 
-
-const test_crawler = async () => {
+const test_sitemap_crawler = async () => {
 
   let logFileUrl = './src/website_dataset/wordpress-sites_sitemap.js';
   let logFailed = './src/website_dataset/wordpress-sites_nositemap.js'
@@ -63,7 +57,31 @@ const test_crawler = async () => {
 
 }
 
-const test_pagecateg = async () => {
+const test_page_categ = async () => {
+
+  const CRAWL_PAGE_LIMIT = 2000;
+
+  try {
+
+    let time_start = Date.now();
+    let website = formatUrlString("http://usainbolt.com/");
+    console.log(website);
+    const resp = await getAllUrls(website, CRAWL_PAGE_LIMIT)
+    console.log("total urls detected", resp.urls.length);
+    console.log("creating page tree");
+    const rootNode = await createPageTree(resp.urls);
+    console.log("categorizing");
+    const urls = await findPagesCategory(rootNode);
+    console.log("static", urls.static.length);
+    console.log("template", urls.template.length);
+    const time_stop = Date.now();
+    console.log("time took ", (time_stop - time_start) / 1000)
+
+    fs.appendFileSync('ussainbolt.json', JSON.stringify(urls))
+
+  } catch (error) {
+    console.log(error);
+  }
 
 }
 
@@ -84,4 +102,4 @@ const main = async () => {
 
 }
 
-test_crawler();
+test_page_categ();
