@@ -59,12 +59,12 @@ const test_sitemap_crawler = async () => {
 
 const test_page_categ = async () => {
 
-  const CRAWL_PAGE_LIMIT = 2000;
+  const CRAWL_PAGE_LIMIT = 100;
 
   try {
 
     let time_start = Date.now();
-    let website = formatUrlString("http://usainbolt.com/");
+    let website = formatUrlString("https://www.apple.com/");
     console.log(website);
     const resp = await getAllUrls(website, CRAWL_PAGE_LIMIT)
     console.log("total urls detected", resp.urls.length);
@@ -77,7 +77,7 @@ const test_page_categ = async () => {
     const time_stop = Date.now();
     console.log("time took ", (time_stop - time_start) / 1000)
 
-    fs.appendFileSync('ussainbolt.json', JSON.stringify(urls))
+    fs.appendFileSync('sample_tree_2.json', JSON.stringify(urls))
 
   } catch (error) {
     console.log(error);

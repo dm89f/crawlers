@@ -67,11 +67,11 @@ async function findAllUrlsFromRobotsTxt(robotsTxt, CRAWL_PAGE_LIMIT) {
   // recursive function to get the xml urls
   async function findAllXmlUrls(xmlUrl) {
 
-    if (httpsUrls.length > CRAWL_PAGE_LIMIT) {
+    if (httpsUrls.length === CRAWL_PAGE_LIMIT) {
       return;
     }
     try {
-      const xmlResp = await axios.get(xmlUrl);
+      const xmlResp = await axios.get(xmlUrl, { timout: 5000 });
 
       const $ = cheerio.load(xmlResp.data, { xmlMode: true });
 
@@ -81,14 +81,17 @@ async function findAllUrlsFromRobotsTxt(robotsTxt, CRAWL_PAGE_LIMIT) {
           xmlUrls.push(nXmlUrl);
           findAllXmlUrls(nXmlUrl);
         } else {
-          if (httpsUrls.length > CRAWL_PAGE_LIMIT) {
+          if (httpsUrls.length === CRAWL_PAGE_LIMIT) {
             return;
           }
           httpsUrls.push(nXmlUrl);
         }
       });
     } catch (error) {
-      console.log("sitemap ", xmlUrl, "Unreachable")
+      if (error.name === "AxiosError") {
+        console.log(xmlUrl);
+        console.log(error.response.status)
+      }
     }
   }
 

@@ -4,7 +4,7 @@ const logConsole = (msg) => {
 }
 
 function isUrlDynamic(segment) {
-  return !isNaN(segment) || segment.length <= 3;
+  return !isNaN(segment) || segment.length <= 2;
 }
 
 
@@ -25,13 +25,15 @@ function createPageTree(pageUrls) {
     let path = '';
 
     for (const segment of segments) {
-      path += `/${segment}`;
 
       let isDynamic = isUrlDynamic(segment);
-      let childNode;
 
-      // if url is dynamic
-      if (isDynamic) {
+      if (isDynamic) continue;
+
+      path += `/${segment}`;
+      let childNode;
+      childNode = node.children.find((child) => child.path === path);
+      if (!childNode) {
         const id = generateId();
         childNode = {
           id,
@@ -42,23 +44,8 @@ function createPageTree(pageUrls) {
           children: [],
         };
         node.children.push(childNode);
-        break;
-      } else {
-        childNode = node.children.find((child) => child.path === path);
-        if (!childNode) {
-          const id = generateId();
-          childNode = {
-            id,
-            name: segment,
-            path,
-            url: url.origin + path,
-            parentId: node.id,
-            children: [],
-          };
-          node.children.push(childNode);
-        }
-        node = childNode;
       }
+      node = childNode;
     }
   }
   // Add each page to the tree
@@ -79,7 +66,7 @@ function createPageTree(pageUrls) {
 async function getLinkIfResponseOk(pageUrl) {
 
   try {
-    const response = await axios.get(pageUrl);
+    const response = await axios.get(pageUrl, { timout: 5000 });
     if (response.status >= 200 && response.status < 300) {
       return { page_exist: true, error: null };
     } else {
