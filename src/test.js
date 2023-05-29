@@ -1,6 +1,12 @@
 const { formatUrlString } = require('./utils/formatUrl');
 const fs = require('fs')
-const { data_set } = require('./website_dataset/wordpress-sites_sitemap')
+const { data_set: wordpress_sitemap } = require('./website_dataset/wordpress-sites_sitemap')
+const { data_set: wordpress_no_sitemap } = require('./website_dataset/wordpress-sites_nositemap')
+const { data_set: wix_no_sitemap } = require('./website_dataset/wix_no_sitemap');
+const { data_set: wix_sitemap } = require('./website_dataset/wix_site_map');
+const { data_set: square_site_map } = require('./website_dataset/square_site_map');
+const { data_set: square_no_site_map } = require('./website_dataset/square_space_no_sitemap');
+
 const getAllUrls = require('../crawlers/index');
 const { createPageTree, findPagesCategory } = require('../crawlers/utils/createPageTree');
 
@@ -102,4 +108,27 @@ const main = async () => {
 
 }
 
-test_page_categ();
+
+const count = async () => {
+
+  let tot_wix_no_sitemap = wix_no_sitemap.length;
+  let tot_wix_sitemap = wix_sitemap.length;
+
+  let tot_wordpress_sitemap = wordpress_sitemap.length;
+  let tot_wordpress_no_sitemap = wordpress_no_sitemap.length;
+
+  let tot_square_space_no_sitemap = square_no_site_map.length;
+  let tot_square_space_sitemap = square_site_map.length;
+
+  console.log("tot_wix_no_sitemap", tot_wix_no_sitemap)
+  console.log("tot_wix_sitemap", tot_wix_sitemap)
+  console.log("tot_wordpress_sitemap", tot_wordpress_sitemap)
+  console.log("tot_wordpress_no_sitemap", tot_wordpress_no_sitemap)
+  console.log("tot_square_space_no_sitemap", tot_square_space_no_sitemap)
+  console.log("tot_square_space_sitemap", tot_square_space_sitemap)
+
+
+
+}
+
+count();
