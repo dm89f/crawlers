@@ -1,138 +1,176 @@
-const { socialDomains } = require('../utils/socialMediaDomains');
-const { Axios } = require('../../crawlers/config/axiosInstance')
+const { Axios } = require('../config/axiosInstance');
 const cheerio = require('cheerio');
-const { errorNames } = require('../utils/errorNames');
+const { socialMediaDomains } = require('../utils/socialMediaDomains')
 
-/**
- * @param baseUrl: base url for the website
- */
-async function getPagesToCrawl(baseUrl) {
-  const visited = new Set();
-  const pages = [];
-  let phones = new Set();
-  let emails = new Set();
-  let socialMedia = new Set();
+const recursiveCrawler = async (base_url) => {
 
-  const stack = [baseUrl];
-  while (stack.length > 0) {
-    const currentUrl = stack.pop();
-    if (!visited.has(currentUrl)) {
-      try {
-        console.log(`visiting... ${currentUrl}`);
+  const links_to_crawl = [base_url];
+  let social_links = new Set;
+  let mail_links = new Set();
+  let contact_links = new Set();
+  let visited_paths = new Set();
 
-        visited.add(currentUrl);
-        const response = await Axios.get(currentUrl);
-        const $ = cheerio.load(response.data);
-        pages.push(currentUrl);
-        const pageLinks = $('a')
-          .map((i, el) => $(el).attr('href'))
-          .get();
+  while (links_to_crawl.length !== 0) {
 
-        const newLink = [];
-        for (const link of pageLinks) {
-          if (link.startsWith('mailto:')) {
-            emails.add(link.split('mailto:')[1]);
-          } else if (link.startsWith('tel:')) {
-            phones.add(link.split('tel:')[1]);
+    try {
+      let crawl_url = links_to_crawl.pop();
+      let url_path = urlToPath(crawl_url);
+      if (visited_paths.has(url_path)) continue;
+      visited_paths.add(url_path);
+      console.log("visiting", crawl_url);
+      const { html_data, error } = await getPageHTMLContent(crawl_url);
+      if (error) {
+        continue;
+      }
+
+      if (!html_data) continue;
+
+      const $ = cheerio.load(html_data);
+      const pageLinks = $('a')
+        .map((i, el) => $(el).attr('href'))
+        .get();
+
+      for (let link of pageLinks) {
+
+        if (isLinkRelative(link)) {
+          let abs_url = convertRelToAbsUrl(link, base_url);
+          let url_path = urlToPath(abs_url);
+          if (!visited_paths.has(url_path) && hasPathAllowedExtension(url_path)) {
+            links_to_crawl.push(abs_url);
+          }
+        } else if (isUrlfromSameOrigin(link, base_url)) {
+          let url_path = urlToPath(link);
+          if (!visited_paths.has(url_path) && hasPathAllowedExtension(url_path)) {
+            links_to_crawl.push(link);
+          }
+        } else if (isLinkMail(link)) {
+          let mail_link = link.split('mailto:')[1];
+          if (!mail_links.has(mail_link)) {
+            mail_links.add(mail_link);
+          }
+        } else if (isLinkContact(link)) {
+          let contact_link = link.split('tel:')[1];
+          if (!contact_links.has(contact_link)) {
+            contact_links.add(contact_link)
+          }
+        } else {
+          let social_str = getSocialHandle(link)
+          if (social_str) {
+            social_links.add(social_str);
           } else {
-            try {
-              const linkAsUrl = new URL(link, baseUrl);
-              const h = linkAsUrl.href;
-
-              if (!h.startsWith(baseUrl)) {
-                let socialMediaLink = Object.entries(socialDomains) //TODO: only allow social handles
-                  .map(([domain, name]) => ({
-                    name,
-                    url: h.includes(domain) ? h : null,
-                  }))
-                  .filter((socialMedia) => socialMedia.url);
-
-                let smString = socialMediaLink.reduce((acc, curr) => {
-                  return `${curr.name} ${curr.url}`;
-                }, ``);
-
-                if (smString.length > 0) socialMedia.add(smString);
-                continue;
-              }
-
-              if (
-                !isValidHttpUrl(h) ||
-                !hasAllowedExtension(linkAsUrl) ||
-                !linkNoHash(linkAsUrl) ||
-                visited.has(h)
-              ) {
-                continue;
-              }
-
-              newLink.push(h);
-            } catch (e) {
-              if (e.code === 'ERR_INVALID_URL') {
-                console.log('Found malformed url ->', e.input);
-              }
-            }
+            // console.log("leaving", link);
           }
         }
-        stack.push(...newLink);
-      } catch (e) {
-        console.log(e.request)
-
-        if (e.code === 'ENOTFOUND') {
-          console.log(e.name, e.code);
-          break;
-        } else if (e.name === errorNames.AXIOS) {
-          console.log(`${e.name} ${e.response.status} -> ${currentUrl}`);
-        }
       }
+
+    } catch (error) {
+
+      console.log(error);
     }
+
+
+
   }
 
-  phones = [...phones];
-  emails = [...emails];
-  let socialMedia_arr = [];
-  for (let social of socialMedia) {
-    const [name, url] = social.split(' ');
-    socialMedia_arr.push({
-      name,
-      url,
-    });
+  const all_website_pages = Array.from(visited_paths).map((relative) => convertRelToAbsUrl(relative, base_url));
+  const all_mail_links = Array.from(mail_links)
+  const all_contact_links = Array.from(contact_links);
+  const all_social_links = Array.from(social_links).map(linkStr => ({ name: linkStr.split(',')[0], url: linkStr.split(',')[1] }))
+  console.log(all_website_pages);
+  console.log(all_mail_links);
+  console.log(all_contact_links);
+  console.log(all_social_links);
+}
+
+const isLinkRelative = (link = "") => link.startsWith('/');
+
+const convertRelToAbsUrl = (relative, base) => {
+  let url = new URL(relative, base);
+  return url.href;
+}
+
+const urlToPath = (url) => {
+  let urlObj = new URL(url);
+  return urlObj.pathname;
+}
+
+const getPageHTMLContent = async (url) => {
+
+  try {
+    const resp = await Axios.get(url);
+    const contentType = resp.headers['content-type'];
+    if (contentType && !contentType.includes('text/html')) {
+      throw new Error('Invalid content type. Expected HTML.');
+    }
+    return { html_data: resp.data, error: null };
+  } catch (error) {
+    if (error.name === 'Error') {
+      console.log(error);
+      return { html_data: null, error: error.name }
+    } else if (error.name === 'AxiosError') {
+      console.log(error.response.status);
+      return { html_data: null, error: error.name }
+    } else {
+      console.log(error);
+      return { html_data: null, error: error.name };
+    }
+
   }
 
-  return {
-    urls: pages,
-    phones,
-    emails,
-    socialMedia: socialMedia_arr,
-    error: '',
-  };
 }
 
-function isValidHttpUrl(link) {
-  const pattern = new RegExp(
-    '^(https?:\\/\\/)?' + // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    '(\\#[-a-z\\d_]*)?$', // fragment locator
-    'i',
-  );
-  return pattern.test(link);
-}
+const isUrlValid = (url) => {
 
-function linkNoHash(url) {
-  if (url.hash || url.pathname === '/') {
-    // console.log(url.href);
+  try {
+    let test_url = new URL(url);
+    return test_url ? true : false
+  } catch (error) {
     return false;
   }
 
-  return true;
+}
+const getUrlOrigin = (url) => {
+  if (isUrlValid(url)) {
+    let urlObj = new URL(url);
+    return urlObj.origin
+  }
+  return null
 }
 
-function hasAllowedExtension(link) {
-  const extensions = /^([^.]+$|\.(asp|aspx|cgi|htm|html|jsp|php)$)/;
+const isUrlfromSameOrigin = (current_url, base_url) => {
 
-  const testString = link.pathname.slice(-5);
+  const curr_url_origin = getUrlOrigin(current_url);
+  const base_url_origin = getUrlOrigin(base_url);
+
+  if (!curr_url_origin || !base_url_origin) return false;
+
+  return curr_url_origin === base_url_origin;
+
+}
+
+function hasPathAllowedExtension(pathname) {
+  const extensions = /^([^.]+$|\.(asp|aspx|cgi|htm|html|jsp|php)$)/;
+  const testString = pathname.slice(-5);
   return extensions.test(testString);
 }
 
-module.exports = { getPagesToCrawl };
+const isLinkMail = (link = "") => {
+  return link.startsWith('mailto:')
+}
+
+
+const isLinkContact = (link = "") => {
+  return link.startsWith('tel:');
+}
+
+const getSocialHandle = (url = "") => {
+  if (!isUrlValid(url)) return null;
+  for ([social_link, social_name] of Object.entries(socialMediaDomains)) {
+    if (url.includes(social_link)) {
+      return `${social_name},${url}`;
+    }
+  }
+  return null;
+}
+
+module.exports = { recursiveCrawler };
