@@ -1,0 +1,349 @@
+{
+  "static": [
+    {
+      "name": "/",
+      "url": "https://www.icelandicexplorer.com",
+      "ssUrl": "https://www.icelandicexplorer.com"
+    },
+    {
+      "name": "blog",
+      "url": "https://www.icelandicexplorer.com/blog",
+      "ssUrl": "https://www.icelandicexplorer.com/blog"
+    },
+    {
+      "name": "home-gallery",
+      "url": "https://www.icelandicexplorer.com/home-gallery",
+      "ssUrl": "https://www.icelandicexplorer.com/home-gallery"
+    },
+    {
+      "name": "home-breaks",
+      "url": "https://www.icelandicexplorer.com/home-breaks",
+      "ssUrl": "https://www.icelandicexplorer.com/home-breaks"
+    },
+    {
+      "name": "about-gallery",
+      "url": "https://www.icelandicexplorer.com/about-gallery",
+      "ssUrl": "https://www.icelandicexplorer.com/about-gallery"
+    },
+    {
+      "name": "about-brands",
+      "url": "https://www.icelandicexplorer.com/about-brands",
+      "ssUrl": "https://www.icelandicexplorer.com/about-brands"
+    },
+    {
+      "name": "projects",
+      "url": "https://www.icelandicexplorer.com/projects",
+      "ssUrl": "https://www.icelandicexplorer.com/projects"
+    },
+    {
+      "name": "home",
+      "url": "https://www.icelandicexplorer.com/home",
+      "ssUrl": "https://www.icelandicexplorer.com/home"
+    },
+    {
+      "name": "about",
+      "url": "https://www.icelandicexplorer.com/about",
+      "ssUrl": "https://www.icelandicexplorer.com/about"
+    },
+    {
+      "name": "phototours",
+      "url": "https://www.icelandicexplorer.com/phototours",
+      "ssUrl": "https://www.icelandicexplorer.com/phototours"
+    },
+    {
+      "name": "book-landmannalaugar",
+      "url": "https://www.icelandicexplorer.com/book-landmannalaugar",
+      "ssUrl": "https://www.icelandicexplorer.com/book-landmannalaugar"
+    },
+    {
+      "name": "book-reykjanes",
+      "url": "https://www.icelandicexplorer.com/book-reykjanes",
+      "ssUrl": "https://www.icelandicexplorer.com/book-reykjanes"
+    },
+    {
+      "name": "book-southcoast",
+      "url": "https://www.icelandicexplorer.com/book-southcoast",
+      "ssUrl": "https://www.icelandicexplorer.com/book-southcoast"
+    },
+    {
+      "name": "book-thorsmork",
+      "url": "https://www.icelandicexplorer.com/book-thorsmork",
+      "ssUrl": "https://www.icelandicexplorer.com/book-thorsmork"
+    },
+    {
+      "name": "book-custom",
+      "url": "https://www.icelandicexplorer.com/book-custom",
+      "ssUrl": "https://www.icelandicexplorer.com/book-custom"
+    },
+    {
+      "name": "book-reykjaviktour",
+      "url": "https://www.icelandicexplorer.com/book-reykjaviktour",
+      "ssUrl": "https://www.icelandicexplorer.com/book-reykjaviktour"
+    },
+    {
+      "name": "shop",
+      "url": "https://www.icelandicexplorer.com/shop",
+      "ssUrl": "https://www.icelandicexplorer.com/shop"
+    },
+    {
+      "name": "client",
+      "url": "https://www.icelandicexplorer.com/projects/client",
+      "ssUrl": "https://www.icelandicexplorer.com/projects/client"
+    },
+    {
+      "name": "personal",
+      "url": "https://www.icelandicexplorer.com/projects/personal",
+      "ssUrl": "https://www.icelandicexplorer.com/projects/personal"
+    }
+  ],
+  "template": [
+    {
+      "name": "blog",
+      "url": "https://www.icelandicexplorer.com/blog",
+      "urlArray": [
+        {
+          "url": "https://www.icelandicexplorer.com/blog/blog-post-title-four-6bzae-n468g-788z3-bgfjx",
+          "name": "blog-post-title-four-6bzae-n468g-788z3-bgfjx"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/blog/blog-post-title-four-6bzae-n468g-788z3-bgfjx-45pkr",
+          "name": "blog-post-title-four-6bzae-n468g-788z3-bgfjx-45pkr"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/blog/the-year-of-the-corona-iceland-without-tourists",
+          "name": "the-year-of-the-corona-iceland-without-tourists"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/blog/a-day-trip-on-the-snfellsnes-peninsula",
+          "name": "a-day-trip-on-the-snfellsnes-peninsula"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/blog/stillhere",
+          "name": "stillhere"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/blog/publications-book-releases-20212022",
+          "name": "publications-book-releases-20212022"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/blog/my-iceland-guide",
+          "name": "my-iceland-guide"
+        }
+      ],
+      "numChild": 7,
+      "ssUrl": "https://www.icelandicexplorer.com/blog/blog-post-title-four-6bzae-n468g-788z3-bgfjx"
+    },
+    {
+      "name": "projects",
+      "url": "https://www.icelandicexplorer.com/projects",
+      "urlArray": [
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client",
+          "name": "client"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/personal",
+          "name": "personal"
+        }
+      ],
+      "numChild": 2,
+      "ssUrl": "https://www.icelandicexplorer.com/projects/client"
+    },
+    {
+      "name": "shop",
+      "url": "https://www.icelandicexplorer.com/shop",
+      "urlArray": [
+        {
+          "url": "https://www.icelandicexplorer.com/shop/prints",
+          "name": "prints"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/presets",
+          "name": "presets"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/maps-photography-resources",
+          "name": "maps-photography-resources"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/wallpapers",
+          "name": "wallpapers"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/dji0514-pano",
+          "name": "dji0514-pano"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/dji0015-pano",
+          "name": "dji0015-pano"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/dji0403-enhanced-2",
+          "name": "dji0403-enhanced-2"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/q23a1561-edit-2-edit-2",
+          "name": "q23a1561-edit-2-edit-2"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/q23a3873-enhanced-edit",
+          "name": "q23a3873-enhanced-edit"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/ice2497-enhanced",
+          "name": "ice2497-enhanced"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/gf5d9005",
+          "name": "gf5d9005"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/dji0304-pano",
+          "name": "dji0304-pano"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/q23a1485-edit-2-edit-edit",
+          "name": "q23a1485-edit-2-edit-edit"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/q23a7472-enhanced",
+          "name": "q23a7472-enhanced"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/ice2714-enhanced",
+          "name": "ice2714-enhanced"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/ice5453-pano-3-edit-2",
+          "name": "ice5453-pano-3-edit-2"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/dji0024-2-edit-2-enhanced",
+          "name": "dji0024-2-edit-2-enhanced"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/gf5d9684-edit",
+          "name": "gf5d9684-edit"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/shop/p/dji0083-pano-edit-1",
+          "name": "dji0083-pano-edit-1"
+        }
+      ],
+      "numChild": 19,
+      "ssUrl": "https://www.icelandicexplorer.com/shop/prints"
+    },
+    {
+      "name": "client",
+      "url": "https://www.icelandicexplorer.com/projects/client",
+      "urlArray": [
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/phaidon",
+          "name": "phaidon"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/canon",
+          "name": "canon"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/the-retreat-at-blue-lagoon",
+          "name": "the-retreat-at-blue-lagoon"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/inspired-by-iceland",
+          "name": "inspired-by-iceland"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/iceland-lamb-373d6",
+          "name": "iceland-lamb-373d6"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/fjallraven",
+          "name": "fjallraven"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/conde-nast-traveler",
+          "name": "conde-nast-traveler"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/iceland-responsible-fisheries",
+          "name": "iceland-responsible-fisheries"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/iceland-lamb",
+          "name": "iceland-lamb"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/icelandic-provisions",
+          "name": "icelandic-provisions"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/hachette-livre",
+          "name": "hachette-livre"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/hilton",
+          "name": "hilton"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/squarespace",
+          "name": "squarespace"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/amex",
+          "name": "amex"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/eleven-experience",
+          "name": "eleven-experience"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/roro-lulla-doll",
+          "name": "roro-lulla-doll"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/westfjords",
+          "name": "westfjords"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/weddingphotography",
+          "name": "weddingphotography"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/client/carbfix",
+          "name": "carbfix"
+        }
+      ],
+      "numChild": 19,
+      "ssUrl": "https://www.icelandicexplorer.com/projects/client/phaidon"
+    },
+    {
+      "name": "personal",
+      "url": "https://www.icelandicexplorer.com/projects/personal",
+      "urlArray": [
+        {
+          "url": "https://www.icelandicexplorer.com/projects/personal/animals",
+          "name": "animals"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/personal/textureandpatterns",
+          "name": "textureandpatterns"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/personal/greenland",
+          "name": "greenland"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/personal/iceland",
+          "name": "iceland"
+        },
+        {
+          "url": "https://www.icelandicexplorer.com/projects/personal/lonely-houses",
+          "name": "lonely-houses"
+        }
+      ],
+      "numChild": 5,
+      "ssUrl": "https://www.icelandicexplorer.com/projects/personal/animals"
+    }
+  ]
+}

@@ -7,8 +7,9 @@ const { data_set: wix_sitemap } = require('./website_dataset/wix_site_map');
 const { data_set: square_site_map } = require('./website_dataset/square_site_map');
 const { data_set: square_no_site_map } = require('./website_dataset/square_space_no_sitemap');
 
-const getAllUrls = require('../crawlers/index');
+const getAllUrls = require('../crawlers/logics/xmlSitemapLogic');
 const { createPageTree, findPagesCategory } = require('../crawlers/utils/createPageTree');
+const { getAllUrslsUsingAxios } = require('../crawlers/logics/xmlSitemapLogic')
 
 const test_sitemap_crawler = async () => {
 
@@ -91,23 +92,21 @@ const test_page_categ = async () => {
 
 }
 
-
 const main = async () => {
 
   let URL = "https://www.icelandicexplorer.com/";
 
   try {
-    let data = await getAllUrslsUsingAxios(URL);
+    let data = await getAllUrls.getAllUrslsUsingAxios(URL);
     let RootNode = createPageTree(data.urls);
     const pages = await findPagesCategory(RootNode);
-    console.log(pages);
+    fs.appendFileSync('sample_tree', JSON.stringify(pages));
   } catch (error) {
     console.log(error);
   }
 
 
 }
-
 
 const count = async () => {
 
@@ -131,4 +130,4 @@ const count = async () => {
 
 }
 
-count();
+main();
