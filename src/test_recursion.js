@@ -3,10 +3,6 @@ const fs = require('fs')
 const { recursiveCrawler } = require('../crawlers/logics/recursion_new')
 const { createPageTree, findPagesCategory } = require('../crawlers/utils/createPageTree');
 
-
-
-
-
 const test = async () => {
 
   const saas_pages = ["https://equals.app/",
@@ -20,6 +16,6 @@ const test = async () => {
     "https://www.synthesized.io/",]
   const base_url = "https://www.betr.app";
 
-  recursiveCrawler(formatUrlString("pes.edu"));
+  recursiveCrawler(formatUrlString("https://ruya.ae/"));
 }
 test();

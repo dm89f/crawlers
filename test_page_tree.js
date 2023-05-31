@@ -3,7 +3,8 @@ const axios = require('axios');
 let node_cnt = 0;
 const static_urls = new Set();
 const template_urls = new Map();
-
+const http = require('http');
+const https = require('https');
 
 
 
@@ -52,7 +53,7 @@ const getUrlOrigin = (url = "") => {
 
 const addUrlToTree = async (root_node, url) => {
 
-  console.log("adding", url);
+  // console.log("adding", url);
   let node = root_node;
   let path_name = urlToPath(url);
   let segments = path_name.split('/').filter(Boolean);
@@ -85,10 +86,11 @@ const addUrlToTree = async (root_node, url) => {
         node.children.push(childNode);
       } else {
         template_urls.set(path, []);
-        let status = await getLinkIfResponseOk(node_url);
-        if (status.page_exist) {
+        let status = await pingUrl(node_url);
+        if (status) {
           static_urls.add(path);
         } else {
+          console.log(status)
           console.log("stat", node_url)
         }
         childNode = {
@@ -110,8 +112,15 @@ const addUrlToTree = async (root_node, url) => {
   }
 
 }
-
-
+async function pingUrl(url) {
+  try {
+    const response = await axios.head(url);
+    return response.status >= 200 && response.status < 400; // Webpage exists if status is in the 2xx or 3xx range
+  } catch (error) {
+    console.log(error);
+    return false; // Error occurred or webpage does not exist
+  }
+}
 
 
 let test = async () => {
@@ -174,12 +183,13 @@ let test = async () => {
     'https://ruya.ae/work/',
   ];
 
-  console.log(new Set(urls).size)
+  console.time("start-time")
 
   for (let url of urls) {
     await addUrlToTree(root_node, url);
   }
 
+  console.timeEnd("start-time")
   // fs.writeFileSync('sample_tree.json', JSON.stringify(root_node));
   let calc_tot_urls = 0;
 

@@ -92,7 +92,7 @@ const test_page_categ = async () => {
 
 const main = async () => {
 
-  let url = "figmatic.co";
+  let url = "https://nove.eu/";
 
   try {
     let data = await getAllUrls(formatUrlString(url), true, 500);

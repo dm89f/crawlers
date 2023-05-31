@@ -3,6 +3,12 @@ const cheerio = require('cheerio');
 const { socialMediaDomains } = require('../utils/socialMediaDomains')
 const MAX_TEMP_PAGE_CRAWL = 50;
 const MAX_STATIC_PAGE_CRAWL = 50;
+const TREE_CHILD_LIMIT = 5;
+
+
+const static_urls = new Set();
+const template_urls = new Map();
+
 
 const recursiveCrawler = async (base_url) => {
 
@@ -11,6 +17,16 @@ const recursiveCrawler = async (base_url) => {
   let mail_links = new Set();
   let contact_links = new Set();
   let visited_paths = new Set();
+  const root_node = {
+    id: '0000000',
+    name: "",
+    path: "",
+    url: "",
+    parentId: "-1",
+    children: [],
+  }
+
+  let node_cnt = 0;
 
   // const root_node = createNode({
   //   id: "",
@@ -21,14 +37,14 @@ const recursiveCrawler = async (base_url) => {
   //   children: [],
   // })
 
-
-
-
   while (links_to_crawl.length !== 0) {
 
+    let crawl_url = links_to_crawl.pop();
+    if (static_urls.size === MAX_STATIC_PAGE_CRAWL && template_urls.size === MAX_TEMP_PAGE_CRAWL) return;
+    let url_path = urlToPath(crawl_url);
+    if (!checkAddPageToTree(root_node, url_path)) continue;
+
     try {
-      let crawl_url = links_to_crawl.pop();
-      let url_path = urlToPath(crawl_url);
       if (visited_paths.has(url_path)) continue;
       visited_paths.add(url_path);
       console.log("visiting", crawl_url);
@@ -139,6 +155,7 @@ const getPageHTMLContent = async (url) => {
 const checkPageLimitExceeded = async (cnt_temp_page_visit, cnt_static_page_visit) => {
   return cnt_static_page_visit > MAX_STATIC_PAGE_CRAWL && cnt_temp_page_visit > MAX_TEMP_PAGE_CRAWL
 }
+
 const isUrlValid = (url) => {
   if (isLinkRelative(url)) return true;
   try {
@@ -195,6 +212,12 @@ const getSocialHandle = (url = "") => {
   return null;
 }
 
+const getUrlOrigin = (url = "") => {
+
+  const urlObj = new URL(url);
+  return urlObj.origin;
+
+}
 
 // A helper function to generate a unique ID
 const generateId = () => {
@@ -202,5 +225,116 @@ const generateId = () => {
   return '0'.repeat(10 - idString.length) + idString;
 }
 
+const checkAddPageToTree = (root_node, path_name = "") => {
+
+  // const root_node = {
+  //   id: '0000000',
+  //   name: "",
+  //   path: "",
+  //   url: "",
+  //   parentId: "-1",
+  //   children: [],
+  // }
+
+  let node = root_node;
+
+  let segments = path_name.split('/').filter(Boolean);
+  let path = "";
+
+  for (let segment of segments) {
+
+    if (isSegmentDynamic(segment)) continue;
+    path += `/${segment}`;
+    let childNode = node.children.find((child) => child.path === path);
+    if (!childNode) return true;
+    if (childNode.children.length === TREE_CHILD_LIMIT) return false;
+    node = childNode;
+
+  }
+
+
+
+
+}
+
+const addUrlToTree = async (root_node, url) => {
+
+  let node = root_node;
+  let path_name = urlToPath(url);
+  let segments = path_name.split('/').filter(Boolean);
+  let path = "";
+  for (let idx = 0; i < segments.length; ++idx) {
+
+    let segment = segments[idx];
+    if (isSegmentDynamic(segment)) continue;
+    path += `/${segment}`;
+    let node_url = getUrlOrigin(url) + path;
+
+    let childNode = node.children.find((child) => child.path === path);
+    if (!childNode) {
+      if ((idx === segments.length - 1)) {
+        if (isNodeRoot(node)) {
+          static_urls.add(path);
+        }
+        childNode = {
+          id: generateId(),
+          name: segment,
+          path: path,
+          url: node_url,
+          parentId: node.parent_id,
+          children: [],
+        }
+        node.children.push(childNode);
+      } else {
+        template_urls.set(path, []);
+        let status = await getLinkIfResponseOk(node_url);
+        if (status.page_exist) {
+          static_urls.add(path);
+        }
+        childNode = {
+          id: generateId(),
+          name: segment,
+          path: path,
+          url: node_url,
+          parentId: node.parent_id,
+          children: [],
+        }
+        node.children.push(childNode);
+      }
+
+
+    }
+
+    node = childNode;
+
+
+
+  }
+
+}
+
+let isNodeRoot = (node) => {
+  return node.id === '-1';
+}
+
+
+async function getLinkIfResponseOk(pageUrl) {
+
+  try {
+    const response = await axios.get(pageUrl, { timout: 5000 });
+    if (response.status >= 200 && response.status < 300) {
+      return { page_exist: true, error: null };
+    } else {
+      throw new Error("Page Does not Exist");
+    }
+  } catch (error) {
+    return { page_exist: false, error: error.message };
+  }
+
+}
+
+function isSegmentDynamic(segment) {
+  return !isNaN(segment) || segment.length <= 2;
+}
 
 module.exports = { recursiveCrawler };

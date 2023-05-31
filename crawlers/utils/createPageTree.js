@@ -1,4 +1,7 @@
 const axios = require('axios');
+const static_pages = new Set();
+const template_pages = new Map();
+
 const logConsole = (msg) => {
   console.log(msg);
 }
@@ -10,8 +13,9 @@ function isUrlDynamic(segment) {
 
 function createPageTree(pageUrls) {
   const root = { id: '00000', name: '', parentId: null, children: [] };
-  let idCounter = 0;
 
+
+  let idCounter = 0;
   // A helper function to generate a unique ID
   function generateId() {
     const idString = (++idCounter).toString();
@@ -172,6 +176,7 @@ async function findPagesCategory(treeNode) {
 
   return result;
 }
+
 
 module.exports = {
   createPageTree,
