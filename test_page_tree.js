@@ -4,6 +4,11 @@ let node_cnt = 0;
 const static_urls = new Set();
 const template_urls = new Map();
 
+const TREE_CHILD_LIMIT = 100;
+const STATIC_PAGE_LIMIT = 100;
+const TEMPLATE_PAGE_LIMIT = 100;
+
+
 let isNodeRoot = (node) => {
   return node.id === '000000';
 }
@@ -16,6 +21,32 @@ const urlToPath = (url) => {
 const generateId = () => {
   const idString = (++node_cnt).toString();
   return '0'.repeat(10 - idString.length) + idString;
+}
+
+const checkNodeChildLimitInTree = (root_node, url) => {
+
+  let node = root_node;
+  let path_name = new URL(url).pathname;
+  let segments = path_name.split('/').filter(Boolean);
+  let path = "";
+
+  for (let idx = 0; idx < segments.length; ++idx) {
+
+    let segment = segments[idx];
+    path += `/${segment}`;
+    let childNode = node.children.find((child) => child.path === path);
+    if (!childNode) {
+      return true;
+    }
+    if (childNode.children.length === TREE_CHILD_LIMIT) return false;
+
+    node = childNode;
+
+  }
+
+  return false;
+
+
 }
 
 function isSegmentDynamic(segment) {
@@ -87,6 +118,7 @@ const addUrlToTree = async (root_node, url) => {
   }
 
 }
+
 async function pingUrl(url) {
   try {
     const response = await axios.head(url);
@@ -96,7 +128,6 @@ async function pingUrl(url) {
     return false; // Error occurred or webpage does not exist
   }
 }
-
 
 let test = async () => {
 
@@ -205,7 +236,19 @@ let test = async () => {
   console.time("start-time")
 
   for (let url of urls) {
-    await addUrlToTree(root_node, url);
+
+    let curr_stat_urls = static_urls.size;
+    let curr_temp_urls = template_urls.size;
+
+    if (curr_stat_urls >= STATIC_PAGE_LIMIT && curr_temp_urls >= TEMPLATE_PAGE_LIMIT) {
+      break;
+    }
+
+    if (checkNodeChildLimitInTree(root_node, url)) {
+      console.log("visiting", url);
+      await addUrlToTree(root_node, url);
+    }
+
   }
 
   console.timeEnd("start-time")
@@ -218,8 +261,10 @@ let test = async () => {
       calc_tot_urls += arr.length;
     }
   }
+  // console.log(template_urls.keys());
+  console.log("static URLS", static_urls.size);
+  console.log("template URLS", template_urls.size);
   console.log(template_urls.keys())
-  console.log(urls.length, static_urls.size, calc_tot_urls)
 
 }
 
