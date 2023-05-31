@@ -23,7 +23,6 @@ function createPageTree(pageUrls) {
     const segments = url.pathname.split('/').filter(Boolean);
     let node = parentNode;
     let path = '';
-
     for (const segment of segments) {
 
       let isDynamic = isUrlDynamic(segment);
@@ -39,7 +38,7 @@ function createPageTree(pageUrls) {
           id,
           name: segment,
           path,
-          url: url,
+          url: url.origin + path,
           parentId: node.id,
           children: [],
         };
@@ -124,7 +123,7 @@ async function findPagesCategory(treeNode) {
             if (!templateMap.has(currentChild.parentId)) {
               //parent is not a template
               result.static.push({
-                name: currentChild.name,
+                name: currentChild.path,
                 url: currentChild.url,
                 ssUrl: currentChild.url,
               });
@@ -139,7 +138,7 @@ async function findPagesCategory(treeNode) {
             // template home page is also static
             if (resp.page_exist) {
               result.static.push({
-                name: currentChild.name,
+                name: currentChild.path,
                 url: currentChild.url,
                 ssUrl: currentChild.url,
               });
@@ -150,12 +149,12 @@ async function findPagesCategory(treeNode) {
             let urlArray = currentChild.children.map(childNode => {
               return {
                 url: childNode.url,
-                name: childNode.name
+                name: childNode.path
               }
             });
             let ssUrl = await getSsUrlForTempPages(urlArray);
             result.template.push({
-              name: currentChild.name,
+              name: currentChild.path,
               url: currentChild.url,
               urlArray,
               numChild: urlArray.length,
