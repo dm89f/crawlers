@@ -77,7 +77,7 @@ async function findAllUrlsFromRobotsTxt(robotsTxt, CRAWL_PAGE_LIMIT) {
 
       $('loc').each(async function () {
         const nXmlUrl = $(this).text().trim();
-        if (nXmlUrl.endsWith('.xml')) {
+        if (nXmlUrl.endsWith('.xml') || nXmlUrl.toLowerCase().includes('sitemap')) {
           xmlUrls.push(nXmlUrl);
           findAllXmlUrls(nXmlUrl);
         } else {
