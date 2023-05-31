@@ -3,10 +3,11 @@ const axios = require('axios');
 let node_cnt = 0;
 const static_urls = new Set();
 const template_urls = new Map();
+const { urls } = require('./urls')
 
-const TREE_CHILD_LIMIT = 100;
-const STATIC_PAGE_LIMIT = 100;
-const TEMPLATE_PAGE_LIMIT = 100;
+const TREE_CHILD_LIMIT = 10;
+const STATIC_PAGE_LIMIT = 20;
+const TEMPLATE_PAGE_LIMIT = 20;
 
 
 let isNodeRoot = (node) => {
@@ -71,7 +72,6 @@ const addUrlToTree = async (root_node, url) => {
 
     let segment = segments[idx];
     if (isSegmentDynamic(segment) && (idx !== (segments.length - 1))) {
-      console.log("continue", segment, idx)
       continue
     };
     path += `/${segment}`;
@@ -143,95 +143,6 @@ let test = async () => {
     children: [],
   }
 
-  let urls = [
-    'https://rnsit.ac.in/',
-    'https://rnsit.ac.in/mech/',
-    'https://rnsit.ac.in/mca/',
-    'https://rnsit.ac.in/ise/',
-    'https://rnsit.ac.in/eie/',
-    'https://rnsit.ac.in/cse-data-science/',
-    'https://rnsit.ac.in/eee/',
-    'https://rnsit.ac.in/ece/',
-    'https://rnsit.ac.in/cse/',
-    'https://rnsit.ac.in/civil/',
-    'https://rnsit.ac.in/aiml/',
-    'https://rnsit.ac.in/nirf/',
-    'https://rnsit.ac.in/naac-file/',
-    'https://rnsit.ac.in/admissions/',
-    'https://rnsit.ac.in/placements/',
-    'https://rnsit.ac.in/campus-life/',
-    'https://rnsit.ac.in/about/',
-    'https://rnsit.ac.in/admin-staff/',
-    'https://rnsit.ac.in/chem/chem-staff/',
-    'https://rnsit.ac.in/chem/chem-facilities-infrastructure/',
-    'https://rnsit.ac.in/chem/chem-conferences-and-projects/',
-    'https://rnsit.ac.in/chem/',
-    'https://rnsit.ac.in/physics/physics-staff/',
-    'https://rnsit.ac.in/physics/physics-facilities-infrastructure/',
-    'https://rnsit.ac.in/physics/physics-conferences-and-projects/',
-    'https://rnsit.ac.in/physics/',
-    'https://rnsit.ac.in/math/staff/',
-    'https://rnsit.ac.in/math/',
-    'https://rnsit.ac.in/math/math-staff/',
-    'https://rnsit.ac.in/mca/mca-student-life/',
-    'https://rnsit.ac.in/mca/mca-staff/',
-    'https://rnsit.ac.in/mca/mca-facilities-infrastructure/',
-    'https://rnsit.ac.in/mca/mca-conferences-and-projects/',
-    'https://rnsit.ac.in/mca/mca-placement-statistics/',
-    'https://rnsit.ac.in/cybersecurity/',
-    'https://rnsit.ac.in/cse/cse-staff/',
-    'https://rnsit.ac.in/cse/cse-placement-statistics/',
-    'https://rnsit.ac.in/cse/cse-facilities-infrastructure/',
-    'https://rnsit.ac.in/cse/cse-student-life/',
-    'https://rnsit.ac.in/cse/cse-conferences-and-projects/',
-    'https://rnsit.ac.in/cse-data-science/staff/',
-    'https://rnsit.ac.in/cse-data-science/facilities-infrastructure/',
-    'https://rnsit.ac.in/aiml/aiml-student-life/',
-    'https://rnsit.ac.in/aiml/aiml-conferences-and-projects/',
-    'https://rnsit.ac.in/aiml/aiml-facilities-infrastructure/',
-    'https://rnsit.ac.in/aiml/aiml-staff/',
-    'https://rnsit.ac.in/civil/civil-student-life/',
-    'https://rnsit.ac.in/civil/civil-facilities-infrastructure/',
-    'https://rnsit.ac.in/civil/civil-conferences-and-projects/',
-    'https://rnsit.ac.in/civil/civil-placement-statistics/',
-    'https://rnsit.ac.in/civil/civil-staff/',
-    'https://rnsit.ac.in/mech/mech-student-life/',
-    'https://rnsit.ac.in/mech/mech-conferences-and-projects/',
-    'https://rnsit.ac.in/mech/mech-facilities-infrastructure/',
-    'https://rnsit.ac.in/mech/mech-placement-statistics/',
-    'https://rnsit.ac.in/mech/mech-staff/',
-    'https://rnsit.ac.in/eie/eie-student-life/',
-    'https://rnsit.ac.in/eie/eie-staff/',
-    'https://rnsit.ac.in/eie/eie-conferences-and-projects/',
-    'https://rnsit.ac.in/eie/eie-facilities-infrastructure/',
-    'https://rnsit.ac.in/eie/eie-placement-statistics/',
-    'https://rnsit.ac.in/eee/eee-student-life/',
-    'https://rnsit.ac.in/eee/eee-conferences-and-projects/',
-    'https://rnsit.ac.in/eee/eee-facilities-infrastructure/',
-    'https://rnsit.ac.in/eee/eee-placement-statistics/',
-    'https://rnsit.ac.in/eee/eee-staff/',
-    'https://rnsit.ac.in/ise/ise-student-life/',
-    'https://rnsit.ac.in/ise/ise-placement-statistics/',
-    'https://rnsit.ac.in/ise/ise-conferences-and-projects/',
-    'https://rnsit.ac.in/ise/ise-facilities-infrastructure/',
-    'https://rnsit.ac.in/ise/ise-staff/',
-    'https://rnsit.ac.in/ece/ece-student-life/',
-    'https://rnsit.ac.in/ece/ece-conferences-and-projects/',
-    'https://rnsit.ac.in/ece/ece-staff/',
-    'https://rnsit.ac.in/ece/ece-placement-statistics/',
-    'https://rnsit.ac.in/ece/ece-facilities-infrastructure/',
-    'https://rnsit.ac.in/sports/',
-    'https://rnsit.ac.in/cultural/',
-    'https://rnsit.ac.in/contact-us/',
-    'https://rnsit.ac.in/cse-placement-statistics',
-    'https://rnsit.ac.in/naac-dvv/',
-    'https://rnsit.ac.in/ece-placement-statistics',
-    'https://rnsit.ac.in/eee-placement-statistics',
-    'https://rnsit.ac.in/cse-data-science/cse-staff/',
-    'https://rnsit.ac.in/eie-placement-statistics',
-    'https://rnsit.ac.in/ise-placement-statistics',
-    'https://rnsit.ac.in/mca-placement-statistics'
-  ];
 
   console.time("start-time")
 
@@ -245,7 +156,7 @@ let test = async () => {
     }
 
     if (checkNodeChildLimitInTree(root_node, url)) {
-      console.log("visiting", url);
+      // console.log("visiting", url);
       await addUrlToTree(root_node, url);
     }
 
@@ -262,9 +173,9 @@ let test = async () => {
     }
   }
   // console.log(template_urls.keys());
-  console.log("static URLS", static_urls.size);
-  console.log("template URLS", template_urls.size);
-  console.log(template_urls.keys())
+  // console.log("static URLS", static_urls.size);
+  // console.log("template URLS", template_urls.size);
+  console.log(template_urls.entries())
 
 }
 

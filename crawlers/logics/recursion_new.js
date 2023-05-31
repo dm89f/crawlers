@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const { socialMediaDomains } = require('../utils/socialMediaDomains')
 const MAX_TEMP_PAGE_CRAWL = 50;
 const MAX_STATIC_PAGE_CRAWL = 50;
-const TREE_CHILD_LIMIT = 5;
+const TREE_CHILD_LIMIT = 2;
 
 
 const static_urls = new Set();
@@ -42,7 +42,7 @@ const recursiveCrawler = async (base_url) => {
     let crawl_url = links_to_crawl.pop();
     if (static_urls.size === MAX_STATIC_PAGE_CRAWL && template_urls.size === MAX_TEMP_PAGE_CRAWL) return;
     let url_path = urlToPath(crawl_url);
-    if (!checkAddPageToTree(root_node, url_path)) continue;
+    // if (!checkAddPageToTree(root_node, url_path)) continue;
 
     try {
       if (visited_paths.has(url_path)) continue;
@@ -226,16 +226,6 @@ const generateId = () => {
 }
 
 const checkAddPageToTree = (root_node, path_name = "") => {
-
-  // const root_node = {
-  //   id: '0000000',
-  //   name: "",
-  //   path: "",
-  //   url: "",
-  //   parentId: "-1",
-  //   children: [],
-  // }
-
   let node = root_node;
 
   let segments = path_name.split('/').filter(Boolean);
@@ -249,12 +239,7 @@ const checkAddPageToTree = (root_node, path_name = "") => {
     if (!childNode) return true;
     if (childNode.children.length === TREE_CHILD_LIMIT) return false;
     node = childNode;
-
   }
-
-
-
-
 }
 
 const addUrlToTree = async (root_node, url) => {

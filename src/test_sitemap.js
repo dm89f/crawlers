@@ -92,13 +92,11 @@ const test_page_categ = async () => {
 
 const main = async () => {
 
-  let url = "https://nove.eu/";
+  let url = "https://humanmade.com/";
 
   try {
     let data = await getAllUrls(formatUrlString(url), true, 500);
-    const rootNode = createPageTree(data.urls);
-    const pages = await findPagesCategory(rootNode);
-    console.log(pages.template);
+    fs.writeFileSync('urls.json', JSON.stringify(data.urls));
   } catch (error) {
     console.log(error);
   }
