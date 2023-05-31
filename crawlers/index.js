@@ -3,13 +3,11 @@ const { getPagesToCrawl } = require('./logics/recursionLogic');
 
 async function getAllUrls(website, useSiteMapLogic, CRAWL_PAGE_LIMIT) {
   try {
-    let data;
+    let data = null;
     if (useSiteMapLogic) {
       data = await getAllUrslsUsingAxios(website, CRAWL_PAGE_LIMIT);
-    } else {
-      console.log('using recursion Logic');
-      data = await getPagesToCrawl(website);
     }
+    //TODO: implement axios Logic
     return data;
   } catch (err) {
     console.log(err);
