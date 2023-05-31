@@ -4,7 +4,6 @@ const { recursiveCrawler } = require('../crawlers/logics/recursion_new')
 const { createPageTree, findPagesCategory } = require('../crawlers/utils/createPageTree');
 
 
-
 const test = async () => {
 
   const saas_pages = ["https://equals.app/",
@@ -16,7 +15,7 @@ const test = async () => {
     "https://reflect.app/home",
     "https://perawallet.app/",
     "https://www.synthesized.io/",]
-  const base_url = saas_pages[6];
+  const base_url = "https://www.betr.app";
 
   // console.log(base_url);
   recursiveCrawler(formatUrlString(base_url));

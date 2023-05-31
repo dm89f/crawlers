@@ -94,13 +94,11 @@ const test_page_categ = async () => {
 
 const main = async () => {
 
-  let URL = "https://www.icelandicexplorer.com/";
+  let url = "https://betr.app";
 
   try {
-    let data = await getAllUrls.getAllUrslsUsingAxios(URL);
-    let RootNode = createPageTree(data.urls);
-    const pages = await findPagesCategory(RootNode);
-    fs.appendFileSync('sample_tree', JSON.stringify(pages));
+    let data = await getAllUrls.getAllUrslsUsingAxios(formatUrlString(url));
+    console.log(data.urls)
   } catch (error) {
     console.log(error);
   }
