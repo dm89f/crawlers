@@ -6,11 +6,9 @@ const { data_set: wix_no_sitemap } = require('./website_dataset/wix_no_sitemap')
 const { data_set: wix_sitemap } = require('./website_dataset/wix_site_map');
 const { data_set: square_site_map } = require('./website_dataset/square_site_map');
 const { data_set: square_no_site_map } = require('./website_dataset/square_space_no_sitemap');
-
-const getAllUrls = require('../crawlers/logics/xmlSitemapLogic');
 const { createPageTree, findPagesCategory } = require('../crawlers/utils/createPageTree');
 const { getAllUrslsUsingAxios } = require('../crawlers/logics/xmlSitemapLogic')
-
+const { getAllUrls } = require('../crawlers/index')
 const test_sitemap_crawler = async () => {
 
   let logFileUrl = './src/website_dataset/wordpress-sites_sitemap.js';
@@ -94,16 +92,16 @@ const test_page_categ = async () => {
 
 const main = async () => {
 
-  let url = "https://betr.app";
+  let url = "figmatic.co";
 
   try {
-    let data = await getAllUrls.getAllUrslsUsingAxios(formatUrlString(url));
-    console.log(data.urls)
+    let data = await getAllUrls(formatUrlString(url), true, 500);
+    const rootNode = createPageTree(data.urls);
+    const pages = await findPagesCategory(rootNode);
+    console.log(pages.template);
   } catch (error) {
     console.log(error);
   }
-
-
 }
 
 const count = async () => {

@@ -4,11 +4,6 @@ const { socialMediaDomains } = require('../utils/socialMediaDomains')
 const MAX_TEMP_PAGE_CRAWL = 50;
 const MAX_STATIC_PAGE_CRAWL = 50;
 
-let curr_temp_page_cnt = 0;
-let curr_stat_page_cnt = 0;
-
-let node_cnt = 0
-
 const recursiveCrawler = async (base_url) => {
 
   const links_to_crawl = [base_url];
@@ -17,14 +12,14 @@ const recursiveCrawler = async (base_url) => {
   let contact_links = new Set();
   let visited_paths = new Set();
 
-  const root_node = createNode({
-    id: "",
-    name: '',
-    path: "",
-    url: "",
-    parent_id: -1,
-    children: [],
-  })
+  // const root_node = createNode({
+  //   id: "",
+  //   name: '',
+  //   path: "",
+  //   url: "",
+  //   parent_id: -1,
+  //   children: [],
+  // })
 
 
 
@@ -50,6 +45,8 @@ const recursiveCrawler = async (base_url) => {
 
       for (let link of pageLinks) {
 
+        if (!isUrlValid(link)) continue;
+
         if (isLinkRelative(link)) {
           let abs_url = convertRelToAbsUrl(link, base_url);
           let url_path = urlToPath(abs_url);
@@ -57,6 +54,7 @@ const recursiveCrawler = async (base_url) => {
             links_to_crawl.push(abs_url);
           }
         } else if (isUrlfromSameOrigin(link, base_url)) {
+
           let url_path = urlToPath(link);
           if (!visited_paths.has(url_path) && hasPathAllowedExtension(url_path)) {
             links_to_crawl.push(link);
@@ -76,7 +74,7 @@ const recursiveCrawler = async (base_url) => {
           if (social_str) {
             social_links.add(social_str);
           } else {
-            // console.log("leaving", link);
+            // console.log("leaving", getUrlDomain(link));
           }
         }
       }
@@ -142,6 +140,7 @@ const checkPageLimitExceeded = async (cnt_temp_page_visit, cnt_static_page_visit
   return cnt_static_page_visit > MAX_STATIC_PAGE_CRAWL && cnt_temp_page_visit > MAX_TEMP_PAGE_CRAWL
 }
 const isUrlValid = (url) => {
+  if (isLinkRelative(url)) return true;
   try {
     let test_url = new URL(url);
     return test_url ? true : false
@@ -149,22 +148,27 @@ const isUrlValid = (url) => {
     return false;
   }
 }
-const getUrlOrigin = (url) => {
-  if (isUrlValid(url)) {
-    let urlObj = new URL(url);
-    return urlObj.origin
-  }
-  return null
-}
 
 const isUrlfromSameOrigin = (current_url, base_url) => {
 
-  const curr_url_origin = getUrlOrigin(current_url);
-  const base_url_origin = getUrlOrigin(base_url);
+  const curr_url_origin = getUrlDomain(current_url);
+  const base_url_origin = getUrlDomain(base_url);
 
   if (!curr_url_origin || !base_url_origin) return false;
   return curr_url_origin === base_url_origin;
 
+}
+const getUrlDomain = (url) => {
+
+  let urlObj = new URL(url);
+  let host = urlObj.host;
+  let urlDomain = "";
+  if (host.startsWith('www.')) {
+    urlDomain = host.substring('www.'.length)
+  } else {
+    urlDomain = host;
+  }
+  return urlDomain;
 }
 
 function hasPathAllowedExtension(pathname) {
@@ -191,56 +195,6 @@ const getSocialHandle = (url = "") => {
   return null;
 }
 
-const createNode = ({ id, name, path, url, parent_id }) => {
-  return {
-    id,
-    name,
-    path,
-    url,
-    parent_id,
-    children: [],
-  }
-}
-
-const addUrlToPage = (root_node, page_url) => {
-
-  let url = new URL(page_url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  let node = root_node;
-  let path = '';
-
-  for (const segment of segments) {
-
-    let isDynamic = isUrlDynamic(segment);
-    if (isDynamic) continue;
-    path += `/${segment}`;
-    let childNode;
-    childNode = node.children.find((child) => child.path === path);
-    if (!childNode) {
-      const id = generateId(node_cnt);
-      childNode = createNode({
-        id,
-        name: segment,
-        path,
-        url: url,
-        parent_id: node.id
-      });
-      node.children.push(childNode);
-    }
-    node = childNode;
-  }
-
-}
-
-// test
-// if your going to insert node check whether it is static or template keep cnt of sttic and template
-// 
-// 
-// 
-
-function isUrlDynamic(segment) {
-  return !isNaN(segment) || segment.length <= 2;
-}
 
 // A helper function to generate a unique ID
 const generateId = () => {
