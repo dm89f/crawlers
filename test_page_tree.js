@@ -5,9 +5,8 @@ const static_urls = new Set();
 const template_urls = new Map();
 const { urls } = require('./urls')
 
-const TREE_CHILD_LIMIT = 10;
-const STATIC_PAGE_LIMIT = 20;
-const TEMPLATE_PAGE_LIMIT = 20;
+const TREE_CHILD_LIMIT = 5;
+const TOTAL_PAGE_CRAWL_LIMIT = 20;
 
 
 let isNodeRoot = (node) => {
@@ -148,10 +147,9 @@ let test = async () => {
 
   for (let url of urls) {
 
-    let curr_stat_urls = static_urls.size;
-    let curr_temp_urls = template_urls.size;
+    const total_pages_crawled = static_urls.size + template_urls.size
 
-    if (curr_stat_urls >= STATIC_PAGE_LIMIT && curr_temp_urls >= TEMPLATE_PAGE_LIMIT) {
+    if (total_pages_crawled >= TOTAL_PAGE_CRAWL_LIMIT) {
       break;
     }
 
@@ -164,17 +162,17 @@ let test = async () => {
 
   console.timeEnd("start-time")
   fs.writeFileSync('sample_tree.json', JSON.stringify(root_node));
-  let calc_tot_urls = 0;
+  // let calc_tot_urls = 0;
 
-  for (let [temp, arr] of template_urls.entries()) {
-    // console.log(temp, arr, arr.length);
-    if (arr) {
-      calc_tot_urls += arr.length;
-    }
-  }
+  // for (let [temp, arr] of template_urls.entries()) {
+  //   // console.log(temp, arr, arr.length);
+  //   if (arr) {
+  //     calc_tot_urls += arr.length;
+  //   }
+  // }
   // console.log(template_urls.keys());
-  // console.log("static URLS", static_urls.size);
-  // console.log("template URLS", template_urls.size);
+  console.log("static URLS", static_urls);
+  console.log("template URLS", template_urls.size);
   console.log(template_urls.entries())
 
 }
