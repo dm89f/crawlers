@@ -4,8 +4,6 @@ const { socialMediaDomains } = require('../utils/socialMediaDomains')
 const MAX_TEMP_PAGE_CRAWL = 50;
 const MAX_STATIC_PAGE_CRAWL = 50;
 const TREE_CHILD_LIMIT = 2;
-
-
 const static_urls = new Set();
 const template_urls = new Map();
 

@@ -1,6 +1,5 @@
 const axios = require('axios');
 
-
 // utility funcs
 const pingUrl = async (url) => {
   try {
