@@ -1,6 +1,8 @@
 const cheerio = require('cheerio');
-
+const fs = require('fs');
 const { getSocialHandle, isLinkContact, isLinkMail, convertRelToAbsUrl, getPageHTMLContent, urlToPath, isUrlValid, hasPathAllowedExtension, isUrlfromSameOrigin, getUrlDomain, isLinkRelative } = require('./utils/recursionUtils')
+
+const { checkNodeChildLimitInTree, addUrlToTree, } = require('./utils/treeUtils');
 
 
 const recursiveCrawler = async (base_url) => {
@@ -10,19 +12,44 @@ const recursiveCrawler = async (base_url) => {
   let mail_links = new Set();
   let contact_links = new Set();
   let visited_paths = new Set();
+
+
+  // variable to keep track of static and temp pages
   const root_node = {
-    id: '0000000',
+    id: "000000",
     name: "",
     path: "",
     url: "",
     parentId: "-1",
     children: [],
-  }
+  };
+  const TREE_CHILD_LIMIT = 5;
+  const TOTAL_PAGE_CRAWL_LIMIT = 100;
+  let node_cnt = 0;
+  const static_urls = new Set();
+  const template_urls = new Map();
+  static_urls.add('/');
 
   while (links_to_crawl.length !== 0) {
 
     let crawl_url = links_to_crawl.pop();
     let url_path = urlToPath(crawl_url);
+
+    // stop crawling after a specified limit
+    const total_pages_crawled = static_urls.size + template_urls.size
+    if (total_pages_crawled >= TOTAL_PAGE_CRAWL_LIMIT) {
+      console.log("log 1")
+      break;
+    };
+
+    if (!isUrlRoot(crawl_url)) {
+      // check child limit on the node
+      if (!checkNodeChildLimitInTree(root_node, crawl_url, TREE_CHILD_LIMIT)) {
+        continue;
+      }
+    }
+
+    await addUrlToTree(root_node, crawl_url, static_urls, template_urls, ++node_cnt);
 
     try {
       if (visited_paths.has(url_path)) continue;
@@ -39,7 +66,6 @@ const recursiveCrawler = async (base_url) => {
         .get();
 
       for (let link of pageLinks) {
-
         if (!isUrlValid(link)) continue;
 
         if (isLinkRelative(link)) {
@@ -75,7 +101,6 @@ const recursiveCrawler = async (base_url) => {
       }
 
     } catch (error) {
-
       console.log(error);
     }
 
@@ -83,21 +108,35 @@ const recursiveCrawler = async (base_url) => {
 
   }
 
-  const all_website_pages = Array.from(visited_paths).map((relative) => convertRelToAbsUrl(relative, base_url));
-  const all_mail_links = Array.from(mail_links)
-  const all_contact_links = Array.from(contact_links);
-  const all_social_links = Array.from(social_links).map(linkStr => ({ name: linkStr.split(',')[0], url: linkStr.split(',')[1] }));
+  // const all_website_pages = Array.from(visited_paths).map((relative) => convertRelToAbsUrl(relative, base_url));
+  // const all_mail_links = Array.from(mail_links)
+  // const all_contact_links = Array.from(contact_links);
+  // const all_social_links = Array.from(social_links).map(linkStr => ({ name: linkStr.split(',')[0], url: linkStr.split(',')[1] }));
 
-  console.log(all_website_pages);
-  console.log(all_mail_links);
-  console.log(all_contact_links);
-  console.log(all_social_links);
+  // console.log(all_website_pages);
+  // console.log(all_mail_links);
+  // console.log(all_contact_links);
+  // console.log(all_social_links);
+  console.log(static_urls.keys());
+  console.log(template_urls.entries());
+  fs.appendFileSync('sample_tree.json', JSON.stringify(root_node))
+
 }
 
 
-const test = () => {
+const isUrlRoot = (crawl_url) => {
+  if (isUrlValid(crawl_url)) {
+    const pathname = urlToPath(crawl_url);
+    return pathname === '/'
+  }
 
-  recursiveCrawler('https://google.com');
+  return false;
+
+}
+
+const test = async () => {
+
+  await recursiveCrawler('https://sparrowstartup.com/');
 
 }
 

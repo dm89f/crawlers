@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { urls } = require('./urls')
 
-const { checkNodeChildLimitInTree, addUrlToTree } = require('./utils/index');
+const { checkNodeChildLimitInTree, addUrlToTree } = require('./utils/treeUtils');
 
 let test = async () => {
 
@@ -28,7 +28,7 @@ let test = async () => {
 
     if (checkNodeChildLimitInTree(root_node, url, TREE_CHILD_LIMIT)) {
       console.log("visiting", url);
-      await addUrlToTree(root_node, url, static_urls, template_urls, node_cnt);
+      await addUrlToTree(root_node, url, static_urls, template_urls, ++node_cnt);
     }
   }
 

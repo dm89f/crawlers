@@ -32,7 +32,7 @@ const isNodeRoot = (node) => {
 }
 
 const generateId = (node_cnt) => {
-  const idString = (++node_cnt).toString();
+  const idString = (node_cnt).toString();
   return '0'.repeat(10 - idString.length) + idString;
 }
 
