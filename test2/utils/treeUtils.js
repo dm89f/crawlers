@@ -114,7 +114,6 @@ const addUrlToTree = async (root_node, url, static_urls,
     node = childNode;
 
   }
-
 }
 
 module.exports = {

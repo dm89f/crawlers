@@ -136,7 +136,7 @@ const isUrlRoot = (crawl_url) => {
 
 const test = async () => {
 
-  await recursiveCrawler('https://sparrowstartup.com/');
+  await recursiveCrawler('https://perawallet.app/');
 
 }
 

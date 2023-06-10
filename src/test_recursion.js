@@ -14,7 +14,7 @@ const test = async () => {
     "https://reflect.app/home",
     "https://perawallet.app/",
     "https://www.synthesized.io/",]
-  const base_url = "rnsit.ac.in";
+  const base_url = "https://sparrowstartup.com/";
 
   recursiveCrawler(formatUrlString(base_url));
 }
